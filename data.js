@@ -1,27 +1,27 @@
 /* 
    FILE: data.js
    PURPOSE:
-   This file is the single source of "raw" data for the whole
-   prototype. It holds:
-     - 10 synthetic (fake but realistic) Indian enterprise IT
+   This file is the single source of raw data for the whole
+   prototype. It has:
+     - 10 synthetic enterprise IT
        assets, spread across fictional organizations
-     - 15 synthetic vulnerabilities relevant to Indian
-       enterprise environments
-     - 5 synthetic security investment options with Indian
-       rupee costs
+     - 15 vulnerabilities relevant to the
+       enterprises
+     - 5 security investment options with
+       costs
      - a small "prototype mapping" of common risk themes to
        recognised security frameworks (ISO/IEC 27001, NIST CSF,
        CIS Controls, RBI and SEBI cybersecurity frameworks)
 
    
 /* 
-   SAMPLE (DEFAULT) ASSET DATA
+   SAMPLE ASSET DATA
 
    Each asset represents a piece of IT infrastructure belonging
-   to a fictional Indian organization that could be affected by
+   to a fictional organizations that could be affected by
    a cyber incident.
 
-   Field meanings (all on a simple 1-5 scale unless noted):
+   Field meanings (all on a simple 1-5 scale):
      criticality           -> how important this asset is to the business
      vulnerabilitySeverity -> how severe the worst known vulnerability is
      exposure              -> how exposed/reachable the asset is
@@ -30,12 +30,12 @@
                                security controls reduce the
                                probability of a successful attack
                                (0 = no protection, 1 = perfect protection)
-     downtimeCost          -> estimated cost (INR) if the asset goes
+     downtimeCost          -> estimated cost if the asset goes
                                down for a typical incident
-     dataLossCost          -> estimated cost (INR) of a data breach/
+     dataLossCost          -> estimated cost of a data breach/
                                loss event, including regulatory and
                                customer-notification exposure
-     recoveryCost          -> estimated cost (INR) to investigate &
+     recoveryCost          -> estimated cost to investigate &
                                recover
 */
 const DEFAULT_ASSETS = [
