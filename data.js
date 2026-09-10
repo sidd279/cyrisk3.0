@@ -15,11 +15,6 @@
 
    
 /* 
-   SAMPLE ASSET DATA
-
-   Each asset represents a piece of IT infrastructure belonging
-   to a fictional organizations that could be affected by
-   a cyber incident.
 
    Field meanings (all on a simple 1-5 scale):
      criticality           -> how important this asset is to the business
