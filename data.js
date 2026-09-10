@@ -1,59 +1,29 @@
-/* =========================================================
+/* 
    FILE: data.js
-   TEAM MEMBER 2 — DATA MANAGEMENT
-   =========================================================
+  
+ 
    PURPOSE:
-   This file is the single source of "raw" data for the whole
+   This file is the single source of raw data for the whole
    prototype. It holds:
-     - 10 synthetic (fake but realistic) Indian enterprise IT
+     - 10 synthetic enterprise IT
        assets, spread across fictional organizations
-     - 15 synthetic vulnerabilities relevant to Indian
-       enterprise environments
-     - 5 synthetic security investment options with Indian
-       rupee costs
+     - 15 vulnerabilities relevant to
+       enterprises
+     - 5 security investment options with costs
      - a small "prototype mapping" of common risk themes to
        recognised security frameworks (ISO/IEC 27001, NIST CSF,
        CIS Controls, RBI and SEBI cybersecurity frameworks)
 
-   It also provides small helper functions so the rest of the
-   app (app.js, riskEngine.js, optimizer.js, aiAnalyst.js,
-   scenarioSimulator.js) can load, edit, add, delete and reset
-   this data WITHOUT needing a backend or database, and a
-   shared formatINR() function used everywhere a rupee value
-   is displayed.
+  */
 
-   Persistence is done with the browser's built-in
-   localStorage, so edits survive a page refresh.
-
-   IMPORTANT: All organizations and financial figures in this
-   file are FICTIONAL and used purely to demonstrate the
-   platform's methodology. They are not real companies, and
-   the numbers are not real regulatory penalties or audited
-   losses — see the "Prototype Estimates" labelling used
-   throughout the UI.
-
-   HOW IT CONNECTS TO OTHER FILES:
-     - index.html loads this file first (before riskEngine.js)
-       using <script src="data.js"></script>
-     - riskEngine.js reads the "assets" array returned by
-       loadAssets() and calculates risk for each asset.
-     - optimizer.js reads the "investments" array returned by
-       loadInvestments().
-     - app.js calls addAsset(), updateAsset(), deleteAsset(),
-       resetSampleData(), formatINR() and the selection/budget
-       persistence helpers below.
-     - aiAnalyst.js uses formatINR() so every rupee figure it
-       prints matches the rest of the dashboard.
-   ========================================================= */
-
-/* ---------------------------------------------------------
-   1. SAMPLE (DEFAULT) ASSET DATA
-   ---------------------------------------------------------
+/* 
+  SAMPLE ASSET DATA
+ 
    Each asset represents a piece of IT infrastructure belonging
-   to a fictional Indian organization that could be affected by
+   to a fictional organization that could be affected by
    a cyber incident.
 
-   Field meanings (all on a simple 1-5 scale unless noted):
+   Field meanings (all on a simple 1-5 scale):
      criticality           -> how important this asset is to the business
      vulnerabilitySeverity -> how severe the worst known vulnerability is
      exposure              -> how exposed/reachable the asset is
@@ -69,7 +39,7 @@
                                customer-notification exposure
      recoveryCost          -> estimated cost (INR) to investigate &
                                recover
-   --------------------------------------------------------- */
+*/
 const DEFAULT_ASSETS = [
   {
     id: "A001",
@@ -203,14 +173,7 @@ const DEFAULT_ASSETS = [
   }
 ];
 
-/* ---------------------------------------------------------
-   2. SAMPLE VULNERABILITY DATA (15 vulnerabilities)
-   ---------------------------------------------------------
-   These are descriptive/contextual records used mainly by the
-   AI Risk Analyst and the compliance mapping to explain WHY an
-   asset is risky. They are linked to assets via assetId.
-   severity is on a 1-5 scale (5 = critical).
-   --------------------------------------------------------- */
+/* SAMPLE VULNERABILITY DATA (15 vulnerabilities)  */
 const DEFAULT_VULNERABILITIES = [
   { id: "V001", assetId: "A001", name: "Weak API authentication on partner endpoints", severity: 4, category: "Access Control", description: "Third-party integrations authenticate with static API keys instead of short-lived tokens." },
   { id: "V002", assetId: "A001", name: "Missing multi-factor authentication on admin console", severity: 5, category: "Access Control", description: "Operations staff can access the transaction admin console with a password only." },
@@ -229,14 +192,7 @@ const DEFAULT_VULNERABILITIES = [
   { id: "V015", assetId: "A009", name: "Excessive privileged group membership", severity: 3, category: "IAM", description: "More accounts than necessary hold Domain Admin rights on the Active Directory server." }
 ];
 
-/* ---------------------------------------------------------
-   3. SAMPLE SECURITY INVESTMENT DATA (5 investments)
-   ---------------------------------------------------------
-   Each investment is a candidate control the organization
-   could purchase/implement. cost and riskReduction are in
-   Indian Rupees (INR). These numbers are prototype estimates
-   used to feed the Investment Optimizer (optimizer.js).
-   --------------------------------------------------------- */
+/* SAMPLE SECURITY INVESTMENT DATA (5 investments)  */
 const DEFAULT_INVESTMENTS = [
   {
     id: "I001",
@@ -275,15 +231,7 @@ const DEFAULT_INVESTMENTS = [
   }
 ];
 
-/* ---------------------------------------------------------
-   4. PROTOTYPE FRAMEWORK MAPPING (for the Compliance panel)
-   ---------------------------------------------------------
-   A small, static reference table linking common risk themes
-   seen in this data set to widely used security frameworks.
-   This is illustrative only — see the disclaimer shown next to
-   it in the UI. It is NOT a compliance certification and does
-   not assert conformance with RBI or SEBI requirements.
-   --------------------------------------------------------- */
+/* ROTOTYPE FRAMEWORK MAPPING */
 const COMPLIANCE_MAPPING = [
   {
     riskTheme: "Privileged account exposure",
@@ -335,9 +283,7 @@ const COMPLIANCE_MAPPING = [
   }
 ];
 
-/* ---------------------------------------------------------
-   5. localStorage KEYS
-   --------------------------------------------------------- */
+/* localStorage KEYS */
 const STORAGE_KEYS = {
   ASSETS: "cyberrisk_ai_assets",
   VULNERABILITIES: "cyberrisk_ai_vulnerabilities",
@@ -346,19 +292,9 @@ const STORAGE_KEYS = {
   BUDGET: "cyberrisk_ai_budget"
 };
 
-/* ---------------------------------------------------------
-   6. CORE DATA FUNCTIONS (globally accessible)
-   ---------------------------------------------------------
-   These act as the "API layer" of the app since there is no
-   real backend. app.js and other modules call these instead
-   of touching localStorage directly.
-   --------------------------------------------------------- */
+/* CORE DATA FUNCTIONS */
 
-/**
- * Loads assets from localStorage. If nothing is saved yet,
- * seeds localStorage with DEFAULT_ASSETS and returns those.
- * @returns {Array<Object>} array of asset objects
- */
+
 function loadAssets() {
   const stored = localStorage.getItem(STORAGE_KEYS.ASSETS);
   if (stored) {
@@ -373,18 +309,12 @@ function loadAssets() {
   return JSON.parse(JSON.stringify(DEFAULT_ASSETS));
 }
 
-/**
- * Saves the full assets array to localStorage.
- * @param {Array<Object>} assets
- */
+
 function saveAssets(assets) {
   localStorage.setItem(STORAGE_KEYS.ASSETS, JSON.stringify(assets));
 }
 
-/**
- * Loads vulnerabilities from localStorage (seeding defaults on first run).
- * @returns {Array<Object>}
- */
+
 function loadVulnerabilities() {
   const stored = localStorage.getItem(STORAGE_KEYS.VULNERABILITIES);
   if (stored) {
@@ -398,18 +328,12 @@ function loadVulnerabilities() {
   return JSON.parse(JSON.stringify(DEFAULT_VULNERABILITIES));
 }
 
-/**
- * Saves vulnerabilities array to localStorage.
- * @param {Array<Object>} vulnerabilities
- */
+
 function saveVulnerabilities(vulnerabilities) {
   localStorage.setItem(STORAGE_KEYS.VULNERABILITIES, JSON.stringify(vulnerabilities));
 }
 
-/**
- * Loads investments from localStorage (seeding defaults on first run).
- * @returns {Array<Object>}
- */
+
 function loadInvestments() {
   const stored = localStorage.getItem(STORAGE_KEYS.INVESTMENTS);
   if (stored) {
@@ -423,28 +347,17 @@ function loadInvestments() {
   return JSON.parse(JSON.stringify(DEFAULT_INVESTMENTS));
 }
 
-/**
- * Saves investments array to localStorage.
- * @param {Array<Object>} investments
- */
+
 function saveInvestments(investments) {
   localStorage.setItem(STORAGE_KEYS.INVESTMENTS, JSON.stringify(investments));
 }
 
-/**
- * Returns the static prototype framework mapping (not user-editable).
- * @returns {Array<Object>}
- */
+
 function loadComplianceMapping() {
   return JSON.parse(JSON.stringify(COMPLIANCE_MAPPING));
 }
 
-/**
- * Adds a new asset to the stored assets array.
- * @param {Object} newAsset - must include at least a "name" field.
- *   Any missing numeric fields default to safe values.
- * @returns {Array<Object>} the updated assets array
- */
+
 function addAsset(newAsset) {
   const assets = loadAssets();
 
@@ -467,12 +380,7 @@ function addAsset(newAsset) {
   return assets;
 }
 
-/**
- * Updates an existing asset (by id) with new field values.
- * @param {string} assetId
- * @param {Object} updatedFields - partial object of fields to overwrite
- * @returns {Array<Object>} the updated assets array
- */
+
 function updateAsset(assetId, updatedFields) {
   const assets = loadAssets();
   const index = assets.findIndex(a => a.id === assetId);
@@ -497,22 +405,14 @@ function updateAsset(assetId, updatedFields) {
   return assets;
 }
 
-/**
- * Deletes an asset by id.
- * @param {string} assetId
- * @returns {Array<Object>} the updated assets array
- */
+
 function deleteAsset(assetId) {
   const assets = loadAssets().filter(a => a.id !== assetId);
   saveAssets(assets);
   return assets;
 }
 
-/**
- * Resets assets, vulnerabilities and investments back to the
- * original sample data set, and clears manual investment
- * selections/budget. Used by the "Reset Demo Data" button.
- */
+
 function resetSampleData() {
   saveAssets(DEFAULT_ASSETS);
   saveVulnerabilities(DEFAULT_VULNERABILITIES);
@@ -521,18 +421,9 @@ function resetSampleData() {
   localStorage.removeItem(STORAGE_KEYS.BUDGET);
 }
 
-/* ---------------------------------------------------------
-   7. BUDGET & INVESTMENT SELECTION PERSISTENCE
-   ---------------------------------------------------------
-   The Investment page lets a user tick individual investments
-   by hand (see app.js), independent of the automatic optimizer.
-   These two helpers persist that manual selection and the
-   current budget so they survive a page refresh.
-   --------------------------------------------------------- */
+/* BUDGET & INVESTMENT SELECTION PERSISTENCE */
 
-/**
- * @returns {Array<string>} array of selected investment ids
- */
+
 function loadSelectedInvestmentIds() {
   const stored = localStorage.getItem(STORAGE_KEYS.SELECTED_INVESTMENTS);
   if (!stored) return [];
@@ -543,46 +434,24 @@ function loadSelectedInvestmentIds() {
   }
 }
 
-/**
- * @param {Array<string>} ids
- */
+
 function saveSelectedInvestmentIds(ids) {
   localStorage.setItem(STORAGE_KEYS.SELECTED_INVESTMENTS, JSON.stringify(ids));
 }
 
-/**
- * @returns {number} the last budget the user entered, or the
- *   default demo budget of ₹10,00,000 if none was saved yet.
- */
+
 function loadBudget() {
   const stored = localStorage.getItem(STORAGE_KEYS.BUDGET);
   const num = Number(stored);
   return stored && !isNaN(num) ? num : 1000000;
 }
 
-/**
- * @param {number} budget
- */
+
 function saveBudget(budget) {
   localStorage.setItem(STORAGE_KEYS.BUDGET, String(Number(budget) || 0));
 }
 
-/* ---------------------------------------------------------
-   8. INDIAN CURRENCY FORMATTING
-   ---------------------------------------------------------
-   All financial values in this application are displayed in
-   Indian Rupees using the Indian numbering system (lakh/crore
-   grouping), never $ / USD / EUR / GBP.
-
-   Examples:
-     formatINR(500000)    -> "₹5,00,000"
-     formatINR(1250000)   -> "₹12,50,000"
-     formatINR(10000000)  -> "₹1,00,00,000"
-
-   This function is used by app.js and aiAnalyst.js everywhere
-   a rupee amount is shown, so formatting stays consistent
-   across the whole dashboard.
-   --------------------------------------------------------- */
+/* INDIAN CURRENCY FORMATTING */
 function formatINR(value) {
   const num = Number(value) || 0;
   const isNegative = num < 0;
@@ -595,7 +464,7 @@ function formatINR(value) {
   let formatted;
   if (otherNumbers !== "") {
     // Insert a comma every 2 digits (from the right) in the "other" part,
-    // which is how the Indian numbering system groups lakhs and crores.
+    
     formatted = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + lastThree;
   } else {
     formatted = lastThree;
@@ -604,15 +473,9 @@ function formatINR(value) {
   return (isNegative ? "-₹" : "₹") + formatted;
 }
 
-/* ---------------------------------------------------------
-   9. SMALL VALIDATION / UTILITY HELPERS
-   --------------------------------------------------------- */
+/* UTILITY HELPERS  */
 
-/**
- * Generates the next sequential asset id (e.g. A011, A012...).
- * @param {Array<Object>} existingAssets
- * @returns {string}
- */
+
 function generateAssetId(existingAssets) {
   let max = 0;
   existingAssets.forEach(a => {
@@ -623,40 +486,27 @@ function generateAssetId(existingAssets) {
   return "A" + String(next).padStart(3, "0");
 }
 
-/**
- * Clamps a 1-5 style rating field. Falls back to fallbackValue
- * if the input is not a valid number.
- */
+
 function clampScale(value, fallbackValue) {
   const num = Number(value);
   if (isNaN(num)) return fallbackValue;
   return Math.min(5, Math.max(1, num));
 }
 
-/**
- * Clamps a 0-1 probability/effectiveness field.
- */
 function clampProbability(value, fallbackValue) {
   const num = Number(value);
   if (isNaN(num)) return fallbackValue;
   return Math.min(1, Math.max(0, num));
 }
 
-/**
- * Ensures a currency/cost field is a non-negative number.
- */
+
 function toNonNegativeNumber(value, fallbackValue) {
   const num = Number(value);
   if (isNaN(num) || num < 0) return fallbackValue;
   return num;
 }
 
-/**
- * Returns the vulnerabilities that belong to a specific asset.
- * Used by the AI Risk Analyst to explain "why" an asset is risky.
- * @param {string} assetId
- * @returns {Array<Object>}
- */
+
 function getVulnerabilitiesForAsset(assetId) {
   return loadVulnerabilities().filter(v => v.assetId === assetId);
 }
