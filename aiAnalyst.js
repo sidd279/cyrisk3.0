@@ -3,22 +3,11 @@
    
    PURPOSE:
    Provides a chat-style "Risk Analyst" that answers cyber risk
-   questions in plain English WITHOUT needing an API key or
-   internet connection. This is a RULE-BASED natural language
+   questions .This is a RULE-BASED natural language
    generator: it detects the intent of a question using simple
    keyword matching, then plugs REAL calculated numbers (from
    riskEngine.js / optimizer.js / scenarioSimulator.js) into a
-   pre-written explanation template — written the way a risk
-   analyst would actually brief a manager, not as a marketing
-   pitch.
-
-   HARD RULE: this module must never invent a financial number.
-   Every rupee figure it prints comes from a value that was
-   already calculated elsewhere (asset.expectedAnnualLoss,
-   asset.financialImpact, optimizer results, scenario results),
-   and every figure is formatted with formatINR() so it matches
-   the rest of the dashboard.
-
+   pre-written explanation template.
  */
 function generateRiskExplanation(question, riskData) {
   const q = (question || "").toLowerCase().trim();
@@ -43,9 +32,7 @@ function generateRiskExplanation(question, riskData) {
     return answerFixFirst(data);
   }
 
-  //     what-if / scenario questions (checked before the
-  //     "why is X risky" check so phrases like "what happens if MFA
-  //     is implemented" aren't mistaken for an asset lookup)
+  // what-if / scenario questions 
   const scenarioKey = detectScenarioKeyword(q);
   if (scenarioKey) {
     return answerScenarioQuestion(scenarioKey);
