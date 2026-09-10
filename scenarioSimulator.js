@@ -1,42 +1,9 @@
-/* =========================================================
-   FILE: scenarioSimulator.js
-   TEAM MEMBER: Scenario Simulator
-   =========================================================
+/* 
+   FILE: scenarioSimulator.js 
    PURPOSE:
    Lets the user ask "what if" questions about their security
-   posture, e.g. "what happens if we implement MFA?" or
-   "what happens if we delay remediation by 30 days?". Five
-   scenarios are supported: MFA, patching critical vulnerabilities,
-   network segmentation, improving backups, and delaying
-   remediation by 30 days.
-
-   IMPORTANT: this module does NOT invent a separate risk
-   model. It re-uses calculateEnterpriseRisk() from
-   riskEngine.js on a modified copy of the asset data, so the
-   "before" and "after" numbers are always consistent with the
-   rest of the dashboard.
-
-   HOW IT CONNECTS TO OTHER FILES:
-     - riskEngine.js provides calculateEnterpriseRisk(), which
-       this file calls twice: once on the original assets
-       ("before") and once on a scenario-adjusted copy
-       ("after").
-     - data.js supplies the current assets via loadAssets().
-     - app.js calls runScenario(scenarioKey) when the user
-       clicks a scenario button, and renders the result in the
-       Scenario Simulator section and the
-       "Before vs After Risk" chart.
-     - aiAnalyst.js calls simulateScenario() directly when the
-       user asks a what-if question in the chat
-       (e.g. "What happens if MFA is implemented?").
-   ========================================================= */
-
-/**
- * Catalog of supported scenarios. Each scenario has a unique key,
- * a human-readable label, a short description, and an "apply"
- * function that takes one asset and returns a MODIFIED COPY of it
- * (never mutates the original asset object).
- */
+   posture.
+*/
 const SCENARIOS = {
   mfa: {
     key: "mfa",
@@ -77,10 +44,6 @@ const SCENARIOS = {
     description: "Hardens backup infrastructure and rehearses recovery, so an incident costs less to bounce back from even if it isn't prevented outright.",
     apply: function (asset) {
       const updated = Object.assign({}, asset);
-      // Better backups mainly shrink the cost of an incident (faster,
-      // cleaner recovery) rather than the chance of one occurring, so
-      // this scenario reduces recovery/downtime cost instead of
-      // probability inputs like the other scenarios.
       updated.recoveryCost = Math.round(asset.recoveryCost * 0.6);
       updated.downtimeCost = Math.round(asset.downtimeCost * 0.85);
       updated.controlEffectiveness = clamp01(asset.controlEffectiveness + 0.05);
@@ -101,18 +64,8 @@ const SCENARIOS = {
 };
 
 /**
- * Runs a what-if scenario against a given set of assets and
- * returns the before/after Expected Annual Loss comparison.
- *
- * @param {Array<Object>} assets - current asset data (from data.js)
- * @param {string} scenarioKey - one of the keys in SCENARIOS
- *   ("mfa", "patchCritical", "networkSegmentation", "delayRemediation")
- * @returns {Object} {
- *   scenarioKey, scenarioLabel, description,
- *   beforeEAL, afterEAL,
- *   riskReduction, percentageReduction,
- *   beforePerAsset, afterPerAsset
- * }
+  Runs a what-if scenario against a given set of assets and
+  returns the before/after Expected Annual Loss comparison.
  */
 function simulateScenario(assets, scenarioKey) {
   const scenario = SCENARIOS[scenarioKey];
@@ -121,11 +74,8 @@ function simulateScenario(assets, scenarioKey) {
     return null;
   }
 
-  // "Before" picture uses the risk engine untouched.
   const beforeResult = calculateEnterpriseRisk(assets);
 
-  // "After" picture: apply the scenario's transformation to a COPY
-  // of every asset, then re-run the exact same risk engine.
   const modifiedAssets = assets.map(scenario.apply);
   const afterResult = calculateEnterpriseRisk(modifiedAssets);
 
@@ -148,9 +98,7 @@ function simulateScenario(assets, scenarioKey) {
 }
 
 /**
- * Returns the list of scenarios available in the UI, in a simple
- * array form (useful for building buttons/dropdowns dynamically).
- * @returns {Array<Object>}
+  Returns the list of scenarios available in the UI
  */
 function getAvailableScenarios() {
   return Object.values(SCENARIOS).map(s => ({
@@ -160,9 +108,7 @@ function getAvailableScenarios() {
   }));
 }
 
-/* ---------------------------------------------------------
-   HELPERS
-   --------------------------------------------------------- */
+/*  HELPERS  */
 
 function clamp01(value) {
   const num = Number(value);
@@ -180,13 +126,6 @@ function round2(value) {
   return Math.round(value * 100) / 100;
 }
 
-/* ---------------------------------------------------------
-   "API REPLACEMENT" WRAPPER (see Section 11 of the spec)
-   ---------------------------------------------------------
-   runScenario() loads the current assets from data.js and runs
-   the requested scenario, so app.js and aiAnalyst.js have one
-   simple function to call instead of an HTTP endpoint.
-   --------------------------------------------------------- */
 function runScenario(scenarioKey) {
   const assets = loadAssets();
   return simulateScenario(assets, scenarioKey);
