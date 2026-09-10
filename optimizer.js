@@ -1,7 +1,6 @@
-/* =========================================================
+/* 
    FILE: optimizer.js
-   TEAM MEMBER 4 — INVESTMENT OPTIMIZATION
-   =========================================================
+   
    PURPOSE:
    Given a fixed cybersecurity budget, this module figures out
    WHICH combination of security investments gives the biggest
@@ -12,61 +11,18 @@
       which security investments will reduce the most
       estimated financial risk?"
 
-   ALGORITHM:
-   This is a classic 0/1 Knapsack problem:
      - "Weight" of each item  = investment cost
      - "Value" of each item   = risk reduction
      - Constraint             = total cost <= budget
      - Objective              = maximize total risk reduction
 
-   Because investment costs are large currency values in Indian
-   Rupees (e.g. 300000, i.e. ₹3,00,000), we scale them down to
-   smaller "budget units" before running the dynamic-programming
-   table, then scale back up. This keeps the DP table small and
-   fast while still being an exact (not approximate) knapsack
-   solution. (Currency SYMBOLS are never handled here — this file
-   only ever works with plain numbers; formatINR() in data.js is
-   what turns a number into a displayed "₹" figure.)
+*/
 
-   This file is also the single source of truth for ROSI, so the
-   Investment page's manual checkbox selection (see app.js) calls
-   evaluateInvestmentSelection() below rather than re-implementing
-   the same sum/ROSI math a second time.
-
-   HOW IT CONNECTS TO OTHER FILES:
-     - data.js supplies the investments array (loadInvestments())
-       and formatINR() for displaying the numbers this file returns.
-     - app.js calls runOptimization(budget) when the user clicks
-       "Optimize Budget", and evaluateInvestmentSelection() whenever
-       the user manually ticks/unticks an investment checkbox — both
-       render into the Investment page and its "Investment vs Risk
-       Reduction" chart.
-     - aiAnalyst.js can reference the optimizer's output when
-       answering budget-related questions.
-   ========================================================= */
-
-/**
- * Runs a 0/1 knapsack optimization to pick the best combination
- * of investments under a given budget.
- *
- * @param {number} budget - total amount available to spend
- * @param {Array<Object>} investments - array of
- *   { id, name, cost, riskReduction, description }
- * @returns {Object} {
- *   selectedInvestments: Array<Object>,  // chosen investments (full objects)
- *   totalInvestment: number,
- *   totalRiskReduction: number,
- *   remainingBudget: number,
- *   rosi: number,                         // ROSI % for the whole bundle
- *   allEvaluated: Array<Object>           // every investment + its own ROSI
- * }
- */
 function optimizeBudget(budget, investments) {
   const safeBudget = Math.max(0, Number(budget) || 0);
   const items = (investments || []).filter(inv => Number(inv.cost) > 0);
 
-  // Evaluate every individual investment's own ROSI (useful for display
-  // even if it isn't picked by the knapsack, e.g. in an "all options" table).
+  // Evaluate every individual investment's own ROSI 
   const allEvaluated = items.map(inv => ({
     ...inv,
     rosi: calculateROSI(inv.cost, inv.riskReduction)
@@ -83,9 +39,7 @@ function optimizeBudget(budget, investments) {
     };
   }
 
-  // --- Scale costs down to keep the DP table small & fast ---
-  // Use a scale step based on the smallest cost so we don't lose
-  // meaningful precision, but cap the table size for performance.
+  //  Scale costs down to keep the DP table small & fast 
   const scaleStep = pickScaleStep(items, safeBudget);
   const scaledBudget = Math.floor(safeBudget / scaleStep);
   const scaledItems = items.map(inv => ({
@@ -113,7 +67,7 @@ function optimizeBudget(budget, investments) {
     }
   }
 
-  // --- Backtrack to find which items were actually selected ---
+  //  Backtrack to find which items were actually selected 
   const selected = [];
   let remaining = scaledBudget;
   for (let i = n; i >= 1; i--) {
@@ -146,18 +100,6 @@ function optimizeBudget(budget, investments) {
   };
 }
 
-/**
- * Evaluates a MANUALLY chosen set of investments (e.g. the user
- * ticking checkboxes on the Investment page) using exactly the same
- * totals/ROSI math as optimizeBudget(), so the two selection modes
- * never disagree on how a number is calculated.
- *
- * @param {Array<string>} selectedIds - investment ids the user checked
- * @param {Array<Object>} investments - full investment list
- * @param {number} budget - the currently entered budget
- * @returns {Object} { selectedInvestments, totalInvestment,
- *   totalRiskReduction, remainingBudget, rosi, overBudget }
- */
 function evaluateInvestmentSelection(selectedIds, investments, budget) {
   const idSet = new Set(selectedIds || []);
   const selectedInvestments = (investments || []).filter(inv => idSet.has(inv.id));
@@ -179,13 +121,7 @@ function evaluateInvestmentSelection(selectedIds, investments, budget) {
 
 /**
  * Calculates Return on Security Investment (ROSI) as a percentage.
- *
  * ROSI = (Risk Reduction - Investment Cost) / Investment Cost * 100
- *
- * @param {number} investmentCost
- * @param {number} riskReduction
- * @returns {number} ROSI percentage (e.g. 100 means the investment
- *   returns double its cost in avoided risk)
  */
 function calculateROSI(investmentCost, riskReduction) {
   const cost = Number(investmentCost);
@@ -194,29 +130,14 @@ function calculateROSI(investmentCost, riskReduction) {
   return round2(((reduction - cost) / cost) * 100);
 }
 
-/**
- * Classifies an investment's Priority label from its ROSI, for the
- * "Priority" column on the Investment page. This is a simple,
- * explainable rule of thumb, not a statistical model.
- *
- * @param {number} rosi - ROSI percentage, as returned by calculateROSI()
- * @returns {"High"|"Medium"|"Low"}
- */
 function classifyInvestmentPriority(rosi) {
   if (rosi >= 100) return "High";
   if (rosi >= 40) return "Medium";
   return "Low";
 }
 
-/* ---------------------------------------------------------
-   HELPERS
-   --------------------------------------------------------- */
+/* HELPERS */
 
-/**
- * Picks a sensible scaling step so the knapsack DP table stays
- * small (a few thousand columns at most) regardless of whether
- * currency values are in the hundreds or in the millions.
- */
 function pickScaleStep(items, budget) {
   const minCost = Math.min(budget, ...items.map(i => i.cost));
   // Aim for at most ~2000 columns in the DP table.
@@ -229,14 +150,6 @@ function round2(value) {
   return Math.round(value * 100) / 100;
 }
 
-/* ---------------------------------------------------------
-   "API REPLACEMENT" WRAPPER (see Section 11 of the spec)
-   ---------------------------------------------------------
-   runOptimization() loads investments from data.js and runs
-   the optimizer for a given budget, so app.js has one simple
-   function to call (like hitting a "/optimize" endpoint would
-   in a real backend).
-   --------------------------------------------------------- */
 function runOptimization(budget) {
   const investments = loadInvestments();
   return optimizeBudget(budget, investments);
