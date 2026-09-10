@@ -6,15 +6,15 @@
 <title>CyberRisk AI — Cyber Risk Quantification &amp; Investment Optimization</title>
 
 <!-- Chart.js loaded via CDN (allowed — see project requirements) -->
+  
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- =========================================================
-       TOP BAR
-       ========================================================= -->
+  <!--  TOP BAR  -->
+  
   <header class="topbar">
     <div class="topbar-brand">
       <span class="brand-icon">🛡️</span>
@@ -28,9 +28,8 @@
 
   <div class="app-shell">
 
-    <!-- =========================================================
-         SIDEBAR NAVIGATION
-         ========================================================= -->
+    <!-- SIDEBAR NAVIGATION -->
+    
     <nav class="sidebar" id="sidebar">
       <button class="nav-item active" data-target="dashboard">
         <span class="nav-icon">📊</span> Dashboard
@@ -53,12 +52,11 @@
       </div>
     </nav>
 
-    <!-- =========================================================
-         MAIN CONTENT
-         ========================================================= -->
+    <!--  MAIN CONTENT -->
     <main class="content">
 
-      <!-- ================= DASHBOARD ================= -->
+      <!--  DASHBOARD  -->
+      
       <section id="dashboard" class="panel active">
         <div class="panel-header">
           <h2>Cyber Risk Overview</h2>
@@ -115,7 +113,8 @@
         </div>
       </section>
 
-      <!-- ================= ASSET RISK ================= -->
+      <!--  ASSET RISK  -->
+      
       <section id="assets" class="panel">
         <div class="panel-header">
           <h2>Asset Risk</h2>
@@ -177,7 +176,8 @@
         </div>
       </section>
 
-      <!-- ================= INVESTMENT ================= -->
+      <!--  INVESTMENT  -->
+      
       <section id="optimizer" class="panel">
         <div class="panel-header">
           <h2>Investment</h2>
@@ -248,7 +248,8 @@
         </div>
       </section>
 
-      <!-- ================= AI ANALYST ================= -->
+      <!--  AI ANALYST  -->
+      
       <section id="ai-analyst" class="panel">
         <div class="panel-header">
           <h2>Risk Analyst</h2>
@@ -275,7 +276,8 @@
         </div>
       </section>
 
-      <!-- ================= SCENARIOS ================= -->
+      <!--  SCENARIOS  -->
+      
       <section id="scenarios" class="panel">
         <div class="panel-header">
           <h2>Scenario Simulator</h2>
@@ -321,9 +323,7 @@
     </main>
   </div>
 
-  <!-- =========================================================
-       ADD / EDIT ASSET MODAL
-       ========================================================= -->
+  <!--  ADD / EDIT ASSET MODAL -->
   <div class="modal-overlay" id="assetModalOverlay">
     <div class="modal">
       <h3 id="assetModalTitle">Add Asset</h3>
@@ -378,12 +378,6 @@
     </div>
   </div>
 
-  <!-- =========================================================
-       JAVASCRIPT — order matters (no modules, plain scripts)
-       data.js must load before riskEngine.js, which must load
-       before optimizer.js / scenarioSimulator.js / aiAnalyst.js,
-       and app.js loads LAST because it wires everything together.
-       ========================================================= -->
   <script src="data.js"></script>
   <script src="riskEngine.js"></script>
   <script src="optimizer.js"></script>
