@@ -1,7 +1,6 @@
-/* =========================================================
+/* 
    FILE: aiAnalyst.js
-   TEAM MEMBER 3 — AI RISK ANALYST
-   =========================================================
+   
    PURPOSE:
    Provides a chat-style "Risk Analyst" that answers cyber risk
    questions in plain English WITHOUT needing an API key or
@@ -20,32 +19,6 @@
    and every figure is formatted with formatINR() so it matches
    the rest of the dashboard.
 
-   HOW IT CONNECTS TO OTHER FILES:
-     - riskEngine.js: supplies calculateAllRisk() / per-asset
-       risk numbers used in almost every answer.
-     - data.js: supplies loadAssets() / loadVulnerabilities()
-       and formatINR(), so the analyst can look up assets by
-       name, list related vulnerabilities, and format rupees.
-     - scenarioSimulator.js: supplies runScenario() so the
-       analyst can answer "what happens if..." questions using
-       the same simulation the Scenario Simulator UI uses.
-     - optimizer.js: supplies runOptimization() so the analyst
-       can answer budget/investment questions with real numbers.
-     - app.js: wires the chat input box in index.html to
-       askAI(question), which calls generateRiskExplanation().
-   ========================================================= */
-
-/**
- * Main entry point for the AI Risk Analyst. Detects the intent
- * behind a natural-language question and returns a plain-English
- * answer built entirely from real, already-calculated data.
- *
- * @param {string} question - the user's typed question
- * @param {Object} riskData - the output of calculateAllRisk()
- *   (an enterprise risk object containing perAssetRisk, totals, etc.)
- *   If omitted, this function will calculate it itself.
- * @returns {string} a natural-language answer (plain text, may
- *   contain simple line breaks for readability)
  */
 function generateRiskExplanation(question, riskData) {
   const q = (question || "").toLowerCase().trim();
@@ -55,47 +28,47 @@ function generateRiskExplanation(question, riskData) {
     return "Ask me something about the current risk picture — for example, \"What is our highest financial cyber risk?\"";
   }
 
-  // --- Intent 1: highest financial risk ---
+  // highest financial risk 
   if (isHighestRiskQuestion(q)) {
     return answerHighestRisk(data);
   }
 
-  // --- Intent 2: which vulnerabilities contribute most ---
+  // which vulnerabilities contribute most
   if (isVulnerabilityContributionQuestion(q)) {
     return answerVulnerabilityContribution(data);
   }
 
-  // --- Intent 3: what should we fix first ---
+  //what should we fix first 
   if (isFixFirstQuestion(q)) {
     return answerFixFirst(data);
   }
 
-  // --- Intent 5: what-if / scenario questions (checked before the
+  //     what-if / scenario questions (checked before the
   //     "why is X risky" check so phrases like "what happens if MFA
-  //     is implemented" aren't mistaken for an asset lookup) ---
+  //     is implemented" aren't mistaken for an asset lookup)
   const scenarioKey = detectScenarioKeyword(q);
   if (scenarioKey) {
     return answerScenarioQuestion(scenarioKey);
   }
 
-  // --- Intent 4: "why is <asset> high-risk?" ---
+  // "why is <asset> high-risk?" 
   const matchedAsset = findAssetMentionedInQuestion(q, data);
   if (matchedAsset) {
     return answerWhyAssetIsRisky(matchedAsset, data);
   }
 
-  // --- Intent 6: budget / investment questions ---
+  // budget / investment questions 
   if (isBudgetQuestion(q)) {
     return answerBudgetQuestion(q);
   }
 
-  // --- Fallback: no confident match, guide the user ---
+  // Fallback: no confident match, guide the user
   return fallbackAnswer();
 }
 
-/* ---------------------------------------------------------
+/*
    INTENT DETECTION HELPERS
-   --------------------------------------------------------- */
+ */
 
 function isHighestRiskQuestion(q) {
   return (q.includes("highest") && (q.includes("risk") || q.includes("financial")));
@@ -168,10 +141,6 @@ function findAssetMentionedInQuestion(q, data) {
 
   return bestMatch;
 }
-
-/* ---------------------------------------------------------
-   ANSWER BUILDERS (each uses ONLY real calculated numbers)
-   --------------------------------------------------------- */
 
 function answerHighestRisk(data) {
   const top = data.highestRiskAsset;
@@ -300,23 +269,15 @@ function fallbackAnswer() {
   );
 }
 
-/* ---------------------------------------------------------
+/* 
    FORMATTING HELPERS
-   --------------------------------------------------------- */
+*/
 
 function formatPercent(fraction) {
   const num = Number(fraction) || 0;
   return (num * 100).toFixed(1) + "%";
 }
 
-/* ---------------------------------------------------------
-   "API REPLACEMENT" WRAPPER (see Section 11 of the spec)
-   ---------------------------------------------------------
-   askAI() is the function app.js calls from the chat UI. It
-   loads the latest calculated risk data and delegates to
-   generateRiskExplanation(), so the chat box never has to know
-   about riskEngine.js directly.
-   --------------------------------------------------------- */
 function askAI(question) {
   const riskData = calculateAllRisk();
   return generateRiskExplanation(question, riskData);
