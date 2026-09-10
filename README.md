@@ -2,8 +2,7 @@
 
 **AI-Powered Continuous Cyber Risk Quantification and Investment Optimization Platform**
 
-A pure front-end prototype, built for an Indian enterprise audience: open `index.html` in Chrome and it runs. No backend, no Node.js, no Python, no database, no API key, and no build tools.
-
+A pure front-end prototype, built for an Indian enterprise audience
 ---
 
 ## Problem Statement
@@ -60,56 +59,6 @@ cyberrisk-ai/
 └── README.md
 ```
 
----
-
-## How to Run Locally
-
-1. Download or clone this folder.
-2. Double-click `index.html` (or right-click → **Open with** → Google Chrome).
-3. That's it — no server, no install, no terminal required.
-
-> Tip: some browsers restrict `localStorage` for files opened directly via `file://` in certain security configurations. If you notice your edits aren't saving, try serving the folder with any simple static server (optional, not required) — for example VS Code's "Live Server" extension — or just use Chrome, which handles this correctly for local files in the default configuration.
-
----
-
-## How to Deploy to GitHub Pages
-
-1. Create a new GitHub repository and push this folder's contents to the `main` branch (the `index.html` file must sit at the repository root, or in the folder you configure below).
-2. In your repository, go to **Settings → Pages**.
-3. Under **Build and deployment**, set **Source** to "Deploy from a branch".
-4. Choose the `main` branch and the `/ (root)` folder, then click **Save**.
-5. GitHub will publish your site at `https://<your-username>.github.io/<repository-name>/` within a minute or two.
-6. No environment variables, secrets, or server configuration are needed — it is a fully static site.
-
----
-
-## Demo Script (matches the required demo scenario)
-
-1. Open the app — sample data loads automatically.
-2. Go to **Dashboard** — Expected Annual Loss and the count of assets needing attention are shown immediately, along with a plain-English summary of where the risk is concentrated.
-3. Go to **Asset Risk** — the UPI Transaction API and other Critical/High assets are visible with their risk level badge and Expected Annual Loss.
-4. Open **Risk Analyst** and ask: *"What is our highest financial cyber risk?"*
-5. Go to **Investment**, set the budget (presets are provided: ₹5,00,000 / ₹10,00,000 / ₹25,00,000 / ₹50,00,000 / ₹1,00,00,000), and either tick investments by hand or click **Optimize Budget**.
-6. Review total investment, estimated risk reduction, remaining budget, and ROSI — all update live as checkboxes are toggled.
-7. Go to **Scenarios** and click **Implement MFA for Privileged Accounts** (or ask the Risk Analyst: *"What happens if MFA is implemented?"*).
-8. Compare the Current vs Projected Expected Annual Loss chart and percentage reduction.
-
----
-
-## Team Member Responsibilities
-
-| # | Area | File(s) | Responsibility |
-|---|------|---------|-----------------|
-| 1 | Risk Engine | `riskEngine.js` | Financial impact, probability, residual risk, Expected Annual Loss, risk scoring, ranking, and Low/Moderate/High/Critical classification — the single source of truth for all risk numbers. |
-| 2 | Data Management | `data.js` | Indian enterprise asset/vulnerability/investment data, `formatINR()` currency formatting, `localStorage` persistence, CRUD operations (add/edit/delete/reset). |
-| 3 | AI Risk Analyst | `aiAnalyst.js` | Rule-based natural-language explanations of calculated risk data through a chat interface — no API key required. |
-| 4 | Investment Optimization | `optimizer.js` | 0/1 knapsack budget optimizer, manual-selection evaluation (for the checkbox UI), ROSI and investment-priority calculations. |
-| 5 | UI/UX & Integration | `index.html`, `style.css`, `app.js` | Dashboard layout, styling, charts, checkbox interactivity, and wiring every module together into one cohesive app. |
-
-*(Scenario simulation in `scenarioSimulator.js` and the Framework Mapping reference table were built collaboratively as shared extensions of the risk engine and data layer.)*
-
----
-
 ## Limitations
 
 - All organizations, assets and financial figures are **fictional**, created for demonstration purposes — they do not represent real companies, and the numbers are not real regulatory penalties or audited losses.
@@ -133,22 +82,3 @@ cyberrisk-ai/
 - Deeper, evidence-based mapping to RBI, SEBI and CERT-In requirements, reviewed by a compliance specialist.
 
 ---
-
-## Acceptance Checklist
-
-- [x] `index.html` opens directly in Chrome
-- [x] No installation, backend, or API key required
-- [x] Dashboard loads with Indian sample data
-- [x] All money is displayed in ₹, using Indian number formatting (`formatINR()`)
-- [x] Risk calculations work (Financial Impact, Probability, Residual Probability, EAL, Risk Score, Risk Level)
-- [x] Assets can be edited, added, and deleted
-- [x] Data persists in `localStorage` (assets, investment selection, and budget)
-- [x] Investment checkboxes are genuinely clickable and update totals, remaining budget, ROSI and the chart live
-- [x] Budget optimization works (0/1 knapsack)
-- [x] ROSI is calculated
-- [x] Risk Analyst works without an API key
-- [x] Scenario simulation works (MFA, patching, segmentation, backups, delay)
-- [x] Charts work, with rupee-formatted tooltips
-- [x] Mobile layout works (tables scroll horizontally, cards stack)
-- [x] GitHub Pages deployment is possible (fully static)
-- [x] No major console errors
