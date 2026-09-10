@@ -1,7 +1,5 @@
-/* =========================================================
+/* 
    FILE: app.js
-   TEAM MEMBER 5 — UI/UX AND INTEGRATION
-   =========================================================
    PURPOSE:
    This is the "glue" file. It does NOT contain any risk,
    optimization, simulation, or AI logic itself — it only:
@@ -11,29 +9,13 @@
         formatting every rupee figure with formatINR() from data.js.
      3. Wires up buttons, forms, checkboxes and the chat box to
         those same functions.
-
-   This keeps a single source of truth: every number shown on
-   screen came from riskEngine.js / optimizer.js (directly or
-   indirectly), so the dashboard can never show a value that
-   contradicts the calculations.
-
-   HOW IT CONNECTS TO OTHER FILES:
-     - index.html loads this file LAST, after all the other
-       scripts, so every function it calls already exists.
-     - Uses global functions from data.js, riskEngine.js,
-       optimizer.js, scenarioSimulator.js and aiAnalyst.js.
-   ========================================================= */
-
-/* ---------------------------------------------------------
-   GLOBAL APP STATE
-   --------------------------------------------------------- */
+ */
+/*  GLOBAL APP STATE */
 const chartInstances = {}; // keeps references so we can destroy/recreate charts
 let currentBudget = loadBudget(); // persisted in localStorage, defaults to ₹10,00,000
 let selectedInvestmentIds = new Set(); // investments the user has ticked on the Investment page
 
-/* ---------------------------------------------------------
-   INITIALIZATION
-   --------------------------------------------------------- */
+/*  INITIALIZATION */
 document.addEventListener("DOMContentLoaded", function () {
   // Make sure sample data exists on first-ever visit
   loadAssets();
@@ -55,14 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
   renderEverything();
 });
 
-/**
- * Decides the starting investment selection. If the user has never
- * touched the Investment page before (nothing saved in localStorage
- * yet), we seed the selection with the optimizer's own recommendation
- * for the default budget, so the dashboard looks meaningful on first
- * load. If the user HAS interacted before (even to select nothing),
- * their saved choice is restored as-is.
- */
+
 function initInvestmentSelection() {
   const hasSavedSelection = localStorage.getItem(STORAGE_KEYS.SELECTED_INVESTMENTS) !== null;
 
@@ -79,14 +54,9 @@ function persistSelection() {
   saveSelectedInvestmentIds(Array.from(selectedInvestmentIds));
 }
 
-/**
- * Re-renders every section of the app. Called after any action
- * that changes underlying data (add/edit/delete asset, reset,
- * checkbox toggle, budget change, etc.)
- */
 function renderEverything() {
   // Each section is rendered independently so that an unexpected error
-  // in one (e.g. a chart failing to draw) never prevents the others
+  // in one never prevents the others
   // from showing up — important during a live demo.
   safeRun(renderDashboard);
   safeRun(renderAssetTable);
@@ -104,19 +74,17 @@ function safeRun(fn) {
 }
 
 /**
- * Returns the current investment evaluation (totals + ROSI) based on
- * whatever the user has ticked on the Investment page, at the current
- * budget. Both the Dashboard and the Investment page read from this
- * single function so their numbers never disagree.
+ Returns the current investment evaluation (totals + ROSI) based on
+ whatever the user has ticked on the Investment page, at the current
+ budget. Both the Dashboard and the Investment page read from this
+ single function so their numbers never disagree.
  */
 function getCurrentInvestmentEvaluation() {
   const investments = loadInvestments();
   return evaluateInvestmentSelection(Array.from(selectedInvestmentIds), investments, currentBudget); // optimizer.js
 }
 
-/* ---------------------------------------------------------
-   NAVIGATION (sidebar tab switching)
-   --------------------------------------------------------- */
+/*  NAVIGATION (sidebar tab switching) */
 function setupNavigation() {
   const navItems = document.querySelectorAll(".nav-item");
   navItems.forEach(item => {
@@ -132,9 +100,7 @@ function setupNavigation() {
   });
 }
 
-/* ---------------------------------------------------------
-   DASHBOARD
-   --------------------------------------------------------- */
+/*   DASHBOARD */
 function renderDashboard() {
   const enterpriseRisk = calculateAllRisk(); // riskEngine.js
 
@@ -146,7 +112,7 @@ function renderDashboard() {
   document.getElementById("highestRiskSummary").textContent = buildRiskConcentrationSummary(enterpriseRisk);
 
   // Recommended investment / risk reduction / ROSI cards reflect whatever
-  // is currently ticked on the Investment page (see getCurrentInvestmentEvaluation).
+  // is currently ticked on the Investment page.
   const evaluation = getCurrentInvestmentEvaluation();
   document.getElementById("cardRecommendedInvestment").textContent = describeSelection(evaluation.selectedInvestments);
   document.getElementById("cardRiskReduction").textContent = formatINR(evaluation.totalRiskReduction);
@@ -239,9 +205,7 @@ function renderExposureDistributionChart(perAssetRisk) {
   });
 }
 
-/* ---------------------------------------------------------
-   ASSET RISK TABLE
-   --------------------------------------------------------- */
+/*  ASSET RISK TABLE */
 function setupAssetTableToolbar() {
   document.getElementById("loadSampleBtn").addEventListener("click", function () {
     resetSampleData();
@@ -318,9 +282,7 @@ function levelColor(level) {
   }
 }
 
-/* ---------------------------------------------------------
-   COMPLIANCE / FRAMEWORK MAPPING (reference table, static data)
-   --------------------------------------------------------- */
+/*   COMPLIANCE / FRAMEWORK MAPPING  */
 function renderComplianceTable() {
   const rows = loadComplianceMapping(); // data.js
   const tbody = document.getElementById("complianceTableBody");
@@ -341,9 +303,7 @@ function renderComplianceTable() {
   });
 }
 
-/* ---------------------------------------------------------
-   ADD / EDIT ASSET MODAL
-   --------------------------------------------------------- */
+/*   ADD / EDIT ASSET MODAL */
 function setupAssetModal() {
   document.getElementById("assetModalCancel").addEventListener("click", closeAssetModal);
   document.getElementById("assetModalOverlay").addEventListener("click", function (e) {
@@ -412,9 +372,7 @@ function saveAssetFromForm() {
   renderEverything();
 }
 
-/* ---------------------------------------------------------
-   INVESTMENT PAGE (manual checkboxes + automatic optimizer)
-   --------------------------------------------------------- */
+/* INVESTMENT PAGE */
 function setupOptimizer() {
   document.getElementById("optimizeBtn").addEventListener("click", function () {
     const result = runOptimization(currentBudget); // optimizer.js — 0/1 knapsack
@@ -539,9 +497,7 @@ function renderInvestmentChart() {
   });
 }
 
-/* ---------------------------------------------------------
-   AI RISK ANALYST (chat interface)
-   --------------------------------------------------------- */
+/*  AI RISK ANALYST (chat interface) */
 function setupChat() {
   const sendBtn = document.getElementById("chatSendBtn");
   const input = document.getElementById("chatInput");
@@ -581,9 +537,7 @@ function appendChatMessage(text, sender) {
   chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
-/* ---------------------------------------------------------
-   SCENARIO SIMULATOR
-   --------------------------------------------------------- */
+/*   SCENARIO SIMULATOR */
 function setupScenarioSimulator() {
   // Scenario cards are rendered dynamically; click handlers are
   // attached inside renderScenarioCards() since the cards are
@@ -632,9 +586,7 @@ function runScenarioAndRender(scenarioKey) {
   document.getElementById("scenarioResult").scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
-/* ---------------------------------------------------------
-   RESET DEMO DATA (sidebar button)
-   --------------------------------------------------------- */
+/*   RESET DEMO DATA (sidebar button) */
 function setupResetButton() {
   document.getElementById("resetDataBtn").addEventListener("click", function () {
     if (confirm("Reset ALL data back to the original demo data set? Your edits and investment selection will be lost.")) {
@@ -648,9 +600,7 @@ function setupResetButton() {
   });
 }
 
-/* ---------------------------------------------------------
-   CHART.JS HELPERS
-   --------------------------------------------------------- */
+/*   CHART.JS HELPERS */
 function renderChart(canvasId, config) {
   const ctx = document.getElementById(canvasId);
   if (!ctx) return;
@@ -714,9 +664,7 @@ function palette(count) {
   return colors;
 }
 
-/* ---------------------------------------------------------
-   MISC HELPERS
-   --------------------------------------------------------- */
+/* MISC HELPERS */
 function escapeHtml(str) {
   const div = document.createElement("div");
   div.textContent = String(str == null ? "" : str);
