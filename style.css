@@ -47,9 +47,7 @@ body {
   color: var(--text-dark);
 }
 
-/* 
-   TOP BAR
-   */
+/*   TOP BAR  */
 .topbar {
   display: flex;
   align-items: center;
@@ -92,9 +90,7 @@ body {
   white-space: nowrap;
 }
 
-/* 
-   LAYOUT SHELL
-    */
+/*    LAYOUT SHELL  */
 .app-shell {
   display: flex;
   min-height: calc(100vh - 68px);
@@ -153,9 +149,7 @@ body {
   overflow-x: hidden;
 }
 
-/* 
-   PANELS 
-    */
+/*   PANELS    */
 .panel {
   display: none;
   animation: fadeIn 0.12s ease-in;
@@ -207,9 +201,7 @@ body {
   color: var(--navy-900);
 }
 
-/* 
-   CARDS
-    */
+/*   CARDS  */
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
@@ -245,9 +237,7 @@ body {
   margin-top: 6px;
 }
 
-/* 
-   CHARTS
-    */
+/*   CHARTS   */
 .chart-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -276,9 +266,7 @@ body {
   max-height: 260px;
 }
 
-/* 
-   TOOLBAR 
-    */
+/*   TOOLBAR   */
 .toolbar {
   display: flex;
   align-items: center;
@@ -369,9 +357,7 @@ body {
   background: var(--gray-200);
 }
 
-/* 
-   TABLES
-    */
+/*    TABLES   */
 .table-wrapper {
   background: var(--white);
   border-radius: var(--radius);
@@ -411,9 +397,7 @@ body {
 .risk-medium { color: var(--warning); font-weight: 700; }
 .risk-low { color: var(--success); font-weight: 700; }
 
-/* 
-   RISK LEVEL  
-    */
+/*   RISK LEVEL   */
 .badge {
   display: inline-block;
   padding: 3px 10px;
@@ -433,9 +417,7 @@ body {
 .priority-medium { background: #fdf0e0; color: #a5620f; }
 .priority-low { background: var(--gray-200); color: var(--gray-600); }
 
-/* 
-   INVESTMENT CHECKBOXES
-    */
+/* INVESTMENT CHECKBOXES */
 .checkbox-cell {
   text-align: center;
 }
@@ -479,9 +461,7 @@ body {
   color: var(--blue-500);
 }
 
-/* 
-   SCENARIO CARDS
-    */
+/*   SCENARIO CARDS */
 .scenario-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -513,9 +493,7 @@ body {
   color: var(--gray-600);
 }
 
-/* 
-   AI CHAT
-    */
+/*  AI CHAT */
 .chat-suggestions {
   display: flex;
   flex-wrap: wrap;
@@ -588,9 +566,7 @@ body {
   font-size: 14px;
 }
 
-/* 
-   MODAL (Add/Edit Asset)
-    */
+/* MODAL (Add/Edit Asset) */
 .modal-overlay {
   display: none;
   position: fixed;
@@ -653,9 +629,7 @@ body {
   margin-top: 10px;
 }
 
-/* 
-   RESPONSIVE
-    */
+/*  RESPONSIVE  */
 @media (max-width: 900px) {
   .app-shell {
     flex-direction: column;
